@@ -12,6 +12,8 @@
     "react-dom": "^16.0.0",
     "react-scripts": "1.0.17",
     "sequelize": "^4.22.6",
+    "node-sass-chokidar": "0.0.3",
+    "react-router-dom": "^4.2.2",
     "sequelize-cli": "^3.0.0"
   },
   "devDependencies": {
@@ -20,11 +22,13 @@
     "nodemon": "^1.12.1"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"node index\"",
+    "start": "concurrently \"react-scripts start\" \"node index\" \"npm run watch-css\"",
     "heroku-postbuild": "react-scripts build",
-    "build": "react-scripts build",
+    "build": "concurrently \"react-scripts build\" \"npm run build-css\"",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
+    "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive"
   },
   "engines": {
     "node": "8.9.1",
