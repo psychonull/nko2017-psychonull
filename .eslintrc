@@ -1,3 +1,7 @@
 {
-  "extends": "react-app"
+  "extends": "airbnb",
+  "rules": {
+    // windows linebreaks when not in production environment
+    "linebreak-style": 0
+  }
 }
