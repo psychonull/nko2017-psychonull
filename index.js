@@ -1,6 +1,9 @@
 const express = require('express');
 const helmet = require('helmet');
 const expressEnforcesSSL = require('express-enforces-ssl');
+const db = require('./models');
+const api = require('./api');
+
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -9,6 +12,8 @@ const app = express();
 app
   .use(https)
   .use(helmet());
+
+app.use('/api', api);
 
 // Application-specific routes
 // Add your own routes here!
@@ -49,4 +54,10 @@ function errors(err, req, res, next) {
   res.status(500).send('something went wrong');
 }
 
-app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+db.sequelize.sync()
+  .then(() => {
+    app.listen(PORT, function() {
+      console.log(`Listening on ${PORT}`)
+    });
+  })
+  .catch(err => console.log(err));
