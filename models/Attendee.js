@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize');
 
 module.exports =
-  class User extends Sequelize.Model {
+  class Attendee extends Sequelize.Model {
     static init(sequelize) {
       return super.init({
-        email: {
+        token: {
           type: Sequelize.STRING,
           allowNull: false,
         },
@@ -26,4 +26,3 @@ module.exports =
 
     }
   };
-
