@@ -1,13 +1,11 @@
 import React from 'react';
 import {BrowserRouter as Router, Route} from 'react-router-dom'
-import App from './App';
-import Events from './events/CreateEventComponent';
+import CreateEvent from './events/create';
 
 const Routes = () => (
   <Router>
     <div>
-      <Route exact path="/" component={App} />
-      <Route exact path="/events" component={Events} />
+      <Route exact path="/" component={CreateEvent} />
     </div>
   </Router>
 )
