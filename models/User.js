@@ -9,17 +9,18 @@ module.exports =
           allowNull: false,
         },
         name: {
-          type: Sequelize.STRING
+          type: Sequelize.STRING,
         },
         status: {
           type: Sequelize.ENUM('PENDING', 'ACTIVE', 'DELETED'),
           allowNull: false,
-          defaultValue: 'PENDING'
+          defaultValue: 'PENDING',
         },
-      }, { sequelize })
-    };
-
-    static associate(models) {
-  
+      }, { sequelize });
     }
-  }
+
+    static associate(models) { // eslint-disable-line
+
+    }
+  };
+
