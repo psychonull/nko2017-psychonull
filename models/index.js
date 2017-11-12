@@ -25,6 +25,7 @@ Object.keys(models).forEach((model) => {
   if (typeof models[model].associate === 'function') {
     models[model].associate(models);
   }
+  db[model] = models[model];
 });
 
 db.sequelize = sequelize;

@@ -8,10 +8,10 @@ module.exports =
           type: Sequelize.STRING,
           allowNull: false,
         },
-        description: {
+        body: {
           type: Sequelize.TEXT,
         },
-        date: {
+        when: {
           type: Sequelize.DATE,
         },
         maxAttendance: {
