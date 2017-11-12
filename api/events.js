@@ -1,7 +1,7 @@
 const express = require('express');
 const Joi = require('joi');
 const expressJoi = require('express-joi-validator');
-const { post } = require('../schemas/event')(Joi);
+const { post } = require('../src/schemas/event')(Joi);
 const _ = require('lodash');
 const db = require('../models');
 
