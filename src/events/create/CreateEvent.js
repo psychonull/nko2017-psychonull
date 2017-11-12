@@ -63,9 +63,6 @@ class CreateEvent extends Component {
               <h1 className="title">
                 New Event
               </h1>
-              <h2 className="subtitle">
-                [LOGO]
-              </h2>
             </div>
           </div>
         </section>

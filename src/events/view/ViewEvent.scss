@@ -1,6 +1,45 @@
 .ViewEvent {
+  &-content {
+    padding: 2rem 1.5rem 5rem 1.5rem;
+  }
+
   &-metas {
     font-size: 13px;
     text-align: right;
+
+    span:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &-section {
+    .header {
+      padding: 1rem;
+
+      h3 {
+        margin-bottom: 0;
+      }
+    }
+    .body {
+
+    }
+  }
+
+  &-body {
+    overflow: auto;
+  }
+
+  &-attendees {
+
+  }
+
+  .empty-attendance {
+    font-style: italic;
+    color: gray;
+    padding: 1em;
+
+    &.is-danger {
+      color: #f94747;
+    }
   }
 }

@@ -4,6 +4,7 @@ import axios from 'axios';
 import Event from './Event'
 import NotFound from '../../layouts/NotFound'
 import FullScreenMessage from '../../layouts/FullScreenMessage'
+import ActionButton from './ActionButton'
 import './ViewEvent.css';
 
 class ViewEvent extends Component {
@@ -42,7 +43,12 @@ class ViewEvent extends Component {
           default: return <FullScreenMessage title="BOOM!" message="Something went wrong! (╯°□°）╯︵ ┻━┻" modifier="is-danger"/>
         }
       }
-      default: return (<Event {...this.state.event} />);
+      default: return (
+        <div>
+          <Event {...this.state.event} />
+          <ActionButton event={this.state.event} token={this.state.token} eventId={this.state.id}/>
+        </div>
+      );
     }
   }
 }
