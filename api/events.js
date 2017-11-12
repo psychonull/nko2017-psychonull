@@ -6,6 +6,7 @@ const expressJoi = require('express-joi-validator');
 const { post } = require('../src/schemas/event')(Joi);
 const db = require('../models');
 const config = require('../config');
+const middlewares = require('./middlewares');
 
 const app = express.Router();
 
@@ -55,7 +56,7 @@ app.post('/', expressJoi({ body: post }), async (req, res, next) => {
   }
 });
 
-app.get('/:eventId', async (req, res, next) => {
+app.get('/:eventId', middlewares.authorize(false), async (req, res, next) => {
   const event = await db.Event.findByCode(req.params.eventId, {
     include: [
       { model: db.User, as: 'createdBy' },
@@ -65,12 +66,29 @@ app.get('/:eventId', async (req, res, next) => {
   if (!event) {
     return next({ statusCode: 404 });
   }
-  const responseBody = Object.assign(event.toJSON(), {
-    attendees: event.toJSON().attendees.map(att => ({
+  req.event = event;
+  return next();
+}, (req, res) => {
+  const responseBody = Object.assign(req.event.toJSON(), {
+    attendees: req.event.toJSON().attendees.map(att => ({
       ..._.omit(att.Attendee, ['token']),
       email: att.email,
     })),
   });
+  if (req.user) {
+    if (responseBody.createdBy.id === req.user.id) {
+      responseBody.createdBy.me = true;
+    }
+    responseBody.attendees = responseBody.attendees.map((att) => {
+      if (att.UserId === req.user.id) {
+        return {
+          ...att,
+          me: true,
+        };
+      }
+      return att;
+    });
+  }
   return res.json(responseBody);
 });
 

@@ -6,6 +6,7 @@ let agent = null;
 describe('GET /events/:id', () => {
   let users = null;
   let event = null;
+  let attendees = null;
   before(() => initTest
     .then((a) => {
       agent = a;
@@ -35,6 +36,9 @@ describe('GET /events/:id', () => {
         EventId: event.id,
         token: `${Math.random() * 10000}faketoken`,
       })));
+    })
+    .then((newAttendees) => {
+      attendees = newAttendees;
     }));
 
   it('Should return 404 error if the event is not found', (done) => {
@@ -71,5 +75,16 @@ describe('GET /events/:id', () => {
       });
   });
 
-  it('Should include the "me" flag if authorized and present in the event');
+  it('Should include the "me" flag if authorized and present in the event as creator or attendee', (done) => {
+    agent
+      .get(`/api/events/${event.code}`)
+      .set('Authorization', attendees[0].token)
+      .end((err, res) => {
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.createdBy.me).to.be.true;
+        expect(res.body.attendees.filter(att => att.me)).to.have.lengthOf(1);
+        done();
+      });
+
+  });
 });
