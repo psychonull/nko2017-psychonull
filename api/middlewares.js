@@ -43,7 +43,7 @@ function authorize(isRequired) {
     const auth = req.get('authorization');
     if (!auth) {
       if (isRequired) {
-        return next({ statusCode: 403 });
+        return next({ statusCode: 401 });
       }
       return next();
     }

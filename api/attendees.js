@@ -5,6 +5,7 @@ const expressJoi = require('express-joi-validator');
 const { post } = require('../src/schemas/attendee')(Joi);
 const db = require('../models');
 const config = require('../config');
+const middlewares = require('./middlewares');
 
 const app = express.Router();
 
@@ -45,7 +46,18 @@ app.post('/', expressJoi({ body: post }), canAddAttendee, async (req, res, next)
   const token = await createToken();
   await req.event.addAttendee(user, { through: { token, name: req.body.name } });
   sendNotif(req.event, { token });
-  res.status(204).json({});
+  res.status(204).end();
+});
+
+app.delete('/', middlewares.authorize(true), (req, res, next) => {
+  db.Attendee.update({ status: 'DELETED' }, {
+    where: {
+      UserId: req.user.id,
+      EventId: req.event.id,
+    },
+  })
+    .then(() => res.status(204).end())
+    .catch(next);
 });
 
 module.exports = app;
