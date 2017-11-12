@@ -89,7 +89,8 @@ let CreateEventForm = ({
   maxAttendees,
 
   onChange,
-  onSubmit
+  onSubmit,
+  isSaving
 }) =>
   <div className="CreateEventForm column">
     <form onSubmit={createSubmit(onSubmit)}>
@@ -135,7 +136,8 @@ let CreateEventForm = ({
           </div>
           <div className="column is-4">
             <div className="CreateEventForm-create">
-              <input className="button is-primary is-large" type="submit" value={_('create')}/>
+              <input className={`button is-primary is-large ${isSaving ? 'loading' : ''}`}
+                disabled={isSaving} type="submit" value={_('create')}/>
             </div>
           </div>
         </div>
@@ -152,7 +154,8 @@ CreateEventForm.propTypes = {
   body: PropTypes.string,
   maxAttendees: PropTypes.number,
   onChange: PropTypes.func,
-  onSubmit: PropTypes.func
+  onSubmit: PropTypes.func,
+  isSaving: PropTypes.bool
 }
 CreateEventForm.defaultProps = {
   name: '',

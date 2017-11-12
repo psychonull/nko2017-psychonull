@@ -2,20 +2,11 @@
 const express = require('express');
 const Joi = require('joi');
 const expressJoi = require('express-joi-validator');
+const { post } = require('../schemas/event')(Joi);
 
 const app = express.Router();
 
-const postSchema = {
-  body: {
-    title: Joi.string().required(),
-    body: Joi.string(),
-    email: Joi.string().email().required(),
-    when: Joi.date().iso().required(),
-    maxAttendees: Joi.number().min(0),
-  },
-};
-
-app.post('/', expressJoi(postSchema), async (req, res) => {
+app.post('/', expressJoi({ body: post }), async (req, res) => {
   res.status(204).end();
 });
 

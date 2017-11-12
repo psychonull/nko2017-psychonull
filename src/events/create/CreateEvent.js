@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 import CreateEventForm from './CreateEventForm';
 import './CreateEvent.css';
 /*
@@ -15,6 +16,7 @@ let testEvent = {
 
 class CreateEvent extends Component {
   state = {
+    status: 'ready',
     event: {}
   }
 
@@ -23,19 +25,33 @@ class CreateEvent extends Component {
   }
 
   onSubmit() {
-    console.log(this.state)
+    // TODO: Data validations
+    this.setState({status: 'saving'})
+
+    axios
+      .post('/api/events', this.state.event)
+      .then(res => this.setState({status: 'success'}))
+      .catch(err => this.setState({status: 'error'}))
   }
 
   render() {
+    if (this.state.status === 'success'){
+      return (
+        <div>
+          EVENT CREATED!, go check your email
+        </div>
+      )
+    }
+
     return (
       <div className="CreateEvent container is-fluid">
-        <section class="hero is-dark is-small">
-          <div class="hero-body">
-            <div class="container level">
-              <h1 class="title">
+        <section className="hero is-dark is-small">
+          <div className="hero-body">
+            <div className="container level">
+              <h1 className="title">
                 New Event
               </h1>
-              <h2 class="subtitle">
+              <h2 className="subtitle">
                 [LOGO]
               </h2>
             </div>
@@ -45,6 +61,7 @@ class CreateEvent extends Component {
           <div className="columns">
             <div className="column is-centered CreateEvent-form">
               <CreateEventForm {...this.state.event}
+                saving={this.state.status === 'saving'}
                 onChange={this.onChange.bind(this)}
                 onSubmit={this.onSubmit.bind(this)}/>
             </div>
