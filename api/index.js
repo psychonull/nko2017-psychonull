@@ -37,6 +37,10 @@ app.get('/version', async (req, res) => {
   res.json({ version });
 });
 
+app.post('/events', async (req, res) => {
+  res.status(400).json({ version });
+});
+
 app
   .use(notfound)
   .use(errors);
