@@ -1,8 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import './CreateEventForm.css';
-import FaEnvelope from 'react-icons/lib/fa/envelope';
 import FaAsterisk from 'react-icons/lib/fa/asterisk';
+import FaEnvelope from 'react-icons/lib/fa/envelope';
+import './CreateEventForm.css';
+
+// TODO: move this into controls and import it from there
+// import DatePicker from '../../controls/DatePicker'
+import moment from 'moment'
+import ReactDatePicker from 'react-datetime';
+import '../../controls/DatePicker/DatePicker.css';
 
 let _ = attr => ({
   label_email: 'Your Email',
@@ -27,28 +33,33 @@ let _ = attr => ({
 let parse = (type, value) => {
   switch(type) {
     case 'number': return Number(value) || 0;
+    case 'datetime': return value.toJSON();
     default: return value;
   }
 }
 
-let parseValue = (attr, type, cb) => e => cb({[attr]: parse(type, e.target.value)})
+let parseValue = (attr, type, cb) => e => cb({[attr]: parse(type, type === 'datetime' ? e : e.target.value)})
 
-let FormField = ({label, hint, children}) =>
+let FormField = ({label, hint, error, children}) =>
   <div className="field">
     {label && <label className="label">{label}</label>}
     {children}
-    {hint && <p class="help">{hint}</p>}
+    {error && <p class="help is-danger">{error}</p>}
+    {!error && hint && <p class="help">{hint}</p>}
   </div>
 FormField.propTypes = {
   label: PropTypes.string,
-  hint: PropTypes.string
+  hint: PropTypes.string,
+  error: PropTypes.string
 }
 
-let FormInput = ({type, attr, onChange, ...props}) =>
-  <input className="input" {...props} type={type} onChange={parseValue(attr, type, onChange)}/>
+let FormInput = ({type, attr, error, onChange, ...props}) =>
+  <input className={`input ${error ? 'is-danger' : ''}`} {...props}
+    title={error} type={type} onChange={parseValue(attr, type, onChange)}/>
 FormInput.propTypes = {
   type: PropTypes.string,
   attr: PropTypes.string,
+  error: PropTypes.string,
   onChange: PropTypes.func
 }
 FormInput.defaultProps = {
@@ -56,20 +67,37 @@ FormInput.defaultProps = {
   onChange: () => {}
 }
 
-let FormControl = ({_, attr, hint, required, ...props}) =>
-  <FormField label={_(`label_${attr}`)} hint={_(`hint_${attr}`)}>
+let FormControl = ({_, attr, hint, required, error, ...props}) =>
+  <FormField label={_(`label_${attr}`)} hint={_(`hint_${attr}`)} error={error}>
     <div className={`control ${required ? 'has-icons-right' : ''}`}>
-      <FormInput {...props} attr={attr} placeholder={_(`placeholder_${attr}`)}/>
+      <FormInput {...props} attr={attr} error={error} placeholder={_(`placeholder_${attr}`)}/>
       {required && <span className="icon is-small is-right has-text-danger"><FaAsterisk /></span>}
     </div>
   </FormField>
-
 FormControl.propTypes = {
   _: PropTypes.func.isRequired,
   required: PropTypes.bool,
-  attr: PropTypes.string
+  attr: PropTypes.string,
+  error: PropTypes.string,
 }
 FormControl.defaultProps = {
+  _,
+}
+
+let DateControl = ({_, attr, hint, required, error, onChange, ...props}) =>
+  <FormField label={_(`label_${attr}`)} hint={_(`hint_${attr}`)} error={error}>
+    <div className={`control ${required ? 'has-icons-right' : ''}`}>
+      <ReactDatePicker {...props} value={moment(props.value)} onChange={parseValue(attr, 'datetime', onChange)}/>
+      {required && <span className="icon is-small is-right has-text-danger"><FaAsterisk /></span>}
+    </div>
+  </FormField>
+DateControl.propTypes = {
+  _: PropTypes.func.isRequired,
+  required: PropTypes.bool,
+  attr: PropTypes.string,
+  error: PropTypes.string,
+}
+DateControl.defaultProps = {
   _,
 }
 
@@ -83,11 +111,10 @@ let CreateEventForm = ({
   email,
   when,
   title,
-
-  attendees,
   body,
   maxAttendees,
 
+  errors,
   onChange,
   onSubmit,
   isSaving
@@ -95,14 +122,14 @@ let CreateEventForm = ({
   <div className="CreateEventForm column">
     <form onSubmit={createSubmit(onSubmit)}>
       <div className="columns">
-        <div className="column is-7">
-          <FormControl attr="title" value={title} onChange={onChange} required/>
+        <div className="column is-6">
+          <FormControl attr="title" value={title} onChange={onChange} error={errors.title} required/>
         </div>
-        <div className="column is-3">
-          <FormControl attr="when" value={when} onChange={onChange} required/>
+        <div className="column is-4">
+          <DateControl attr="when" value={when} onChange={onChange} error={errors.when} required/>
         </div>
         <div className="column is-2">
-          <FormControl type="number" attr="maxAttendees" value={maxAttendees} onChange={onChange} />
+          <FormControl type="number" attr="maxAttendees" value={maxAttendees} error={errors.maxAttendees} onChange={onChange} />
         </div>
       </div>
 
@@ -118,12 +145,12 @@ let CreateEventForm = ({
           <div className="column is-8">
             <div className="field">
               <div className="control">
-                <FormInput type="name" attr="name" value={name} placeholder={_('placeholder_name')} onChange={onChange} />
+                <FormInput type="name" attr="name" value={name} placeholder={_('placeholder_name')}  error={errors.name} onChange={onChange} />
               </div>
             </div>
             <div className="field">
               <div className="control has-icons-left has-icons-right is-expanded">
-                <FormInput type="email" attr="email" value={email} placeholder={_('placeholder_email')} onChange={onChange} />
+                <FormInput type="email" attr="email" value={email} error={errors.email} placeholder={_('placeholder_email')} onChange={onChange} />
                 <span className="icon is-small is-left">
                   <FaEnvelope />
                 </span>
@@ -155,7 +182,8 @@ CreateEventForm.propTypes = {
   maxAttendees: PropTypes.number,
   onChange: PropTypes.func,
   onSubmit: PropTypes.func,
-  isSaving: PropTypes.bool
+  isSaving: PropTypes.bool,
+  errors: PropTypes.object
 }
 CreateEventForm.defaultProps = {
   name: '',
@@ -165,7 +193,8 @@ CreateEventForm.defaultProps = {
   body: '',
   maxAttendees: 0,
   onChange: () => {},
-  onSubmit: () => {}
+  onSubmit: () => {},
+  errors: {}
 }
 
 export default CreateEventForm;
