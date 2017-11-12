@@ -60,7 +60,6 @@ describe('GET /events/:id', () => {
         expect(res.body.attendees).to.be.an('array');
         expect(res.body.attendees).to.have.lengthOf(3);
         expect(res.body.createdBy).to.be.an('object');
-        expect(res.body.createdBy.email).to.equal('m@m.com');
         done();
       });
   });
@@ -71,6 +70,28 @@ describe('GET /events/:id', () => {
       .end((err, res) => {
         expect(res.statusCode).to.be.equal(200);
         res.body.attendees.forEach(att => expect(att.token).to.be.undefined);
+        done();
+      });
+  });
+
+  it('Should not include hidden properties', (done) => {
+    const checkUserProps = (u) => {
+      expect(u.id).to.be.undefined;
+      expect(u.email).to.be.undefined;
+      expect(u.createdAt).to.be.undefined;
+      expect(u.updatedAt).to.be.undefined;
+      expect(u.deletedAt).to.be.undefined;
+    };
+
+    agent
+      .get(`/api/events/${event.code}`)
+      .end((err, res) => {
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.id).to.be.undefined;
+        expect(res.body.deletedAt).to.be.undefined;
+        expect(res.body.createdById).to.be.undefined;
+        checkUserProps(res.body.createdBy);
+        res.body.attendees.forEach(a => checkUserProps(a));
         done();
       });
   });
