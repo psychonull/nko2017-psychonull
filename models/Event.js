@@ -24,7 +24,7 @@ module.exports =
           type: Sequelize.DATE,
           allowNull: false,
         },
-        maxAttendance: {
+        maxAttendees: {
           type: Sequelize.INTEGER,
           defaultValue: 50,
         },

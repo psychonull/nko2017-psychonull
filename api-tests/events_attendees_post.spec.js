@@ -94,7 +94,7 @@ describe('POST /events/:id/attendees', () => {
   });
 
   it('Cannot add attendee if the event is in the past', (done) => {
-    db.Event.update({ when: new Date(2008, 10, 1), maxAttendance: 10 }, { where: { id: event.id } })
+    db.Event.update({ when: new Date(2008, 10, 1), maxAttendees: 10 }, { where: { id: event.id } })
       .then(() => {
         agent
           .post(`/api/events/${event.code}/attendees`)
@@ -109,14 +109,14 @@ describe('POST /events/:id/attendees', () => {
   });
 
   it('Cannot add attendee if the event is at the attendees cap', (done) => {
-    db.Event.update({ when: new Date(2048, 10, 1), maxAttendance: 4 }, { where: { id: event.id } })
+    db.Event.update({ when: new Date(2048, 10, 1), maxAttendees: 4 }, { where: { id: event.id } })
       .then(() => {
         agent
           .post(`/api/events/${event.code}/attendees`)
           .send({ name: 'asdasda', email: 'asdasdm@avava.cam' })
           .end((err, res) => {
             expect(res.statusCode).to.be.equal(400);
-            expect(res.body.message).to.match(/maxAttendance/);
+            expect(res.body.message).to.match(/maxAttendees/);
             done();
           });
       })
@@ -124,7 +124,7 @@ describe('POST /events/:id/attendees', () => {
   });
 
   it('Should reuse a existing user and add it to the event', (done) => {
-    db.Event.update({ when: new Date(2048, 10, 1), maxAttendance: 14 }, { where: { id: event.id } })
+    db.Event.update({ when: new Date(2048, 10, 1), maxAttendees: 14 }, { where: { id: event.id } })
       .then(() => db.User.create({ email: 'reuse@plz.tech' }))
       .then((user) => {
         agent
@@ -171,7 +171,7 @@ describe('POST /events/:id/attendees', () => {
   it('Cannot add attendee if the event is PENDING', (done) => {
     db.Event.update({
       when: new Date(2048, 10, 1),
-      maxAttendance: 24,
+      maxAttendees: 24,
       status: 'PENDING',
     }, { where: { id: event.id } })
       .then(() => {

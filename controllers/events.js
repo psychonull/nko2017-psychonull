@@ -7,6 +7,7 @@ const eventById = async (req, res, next, eventId) => {
       { model: db.User, as: 'attendees', through: db.Attendee },
     ],
   });
+
   if (!event) {
     return next({ statusCode: 404 });
   }
