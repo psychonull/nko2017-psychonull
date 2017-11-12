@@ -57,7 +57,7 @@
     }
 
 ### Response
-  OK:   
+  OK: 204  
   BAD REQUEST  
   NOT FOUND  
   ERROR

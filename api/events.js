@@ -1,12 +1,13 @@
 const crypto = require('crypto');
 const express = require('express');
 const Joi = require('joi');
-const _ = require('lodash');
 const expressJoi = require('express-joi-validator');
 const { post } = require('../src/schemas/event')(Joi);
+const _ = require('lodash');
 const db = require('../models');
 const config = require('../config');
 const middlewares = require('./middlewares');
+const attendeesRouter = require('./attendees');
 
 const app = express.Router();
 
@@ -93,5 +94,7 @@ app.get('/:eventId', middlewares.authorize(false), (req, res) => {
   }
   return res.json(responseBody);
 });
+
+app.use('/:eventId/attendees', attendeesRouter);
 
 module.exports = app;
