@@ -61,7 +61,9 @@ app.post('/', expressJoi({ body: post }), async (req, res, next) => {
 });
 
 app.get('/:eventId', middlewares.authorize(false), (req, res) => {
-  const responseBody = Object.assign(req.event.toJSON(), {
+  const hiddenUserProps = ['id', 'email', 'createdAt', 'updatedAt', 'deletedAt'];
+  const baseObj = _.omit(req.event.toJSON(), ['id', 'createdById', 'deletedAt']);
+  let responseBody = Object.assign(baseObj, {
     attendees: req.event.toJSON().attendees.map(att => ({
       ..._.omit(att.Attendee, ['token']),
       email: att.email,
@@ -81,6 +83,10 @@ app.get('/:eventId', middlewares.authorize(false), (req, res) => {
       return att;
     });
   }
+  responseBody = Object.assign(responseBody, {
+    createdBy: _.omit(responseBody.createdBy, hiddenUserProps),
+    attendees: responseBody.attendees.map(a => _.omit(a, hiddenUserProps)),
+  });
   return res.json(responseBody);
 });
 
