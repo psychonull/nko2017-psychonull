@@ -43,13 +43,21 @@ class ActionButton extends Component {
     // It's in the past so no action can be done
     if (moment(event.when) < moment()) return
 
-    // Event is not ready yet to be joined
+    // Event is not ready yet
     if (event.status !== 'CONFIRMED') return
 
     // No user authenticated to check
     if (!token) return this.setState({joinButton: true})
 
-    // let isJoined =>
+    // look for the user if is joined or not
+    let myself = event.attendees.reduce((found, attendees) => attendees.me ? attendees : null, {})
+
+    if (myself) {
+      console.log(myself)
+      if (myself.status === 'ACTIVE') return this.setState({cancelButton: true})
+    }
+
+    // if all fails show Join button
     this.setState({joinButton: true})
   }
 
@@ -70,10 +78,21 @@ class ActionButton extends Component {
       .then(res => {
         this.updateAttendee({status: 'joined'})
       })
-      .catch(err => {
+      .catch(errors => {
         // TODO: Catch errors with the event, like maxAttendees, Pending Event, etc
-        console.log(err)
+        console.log(errors)
         this.updateAttendee({status: 'error', errors})
+      })
+  }
+
+  onLeave() {
+    axios
+      .delete(`/api/events/${this.props.eventId}/attendees`, {headers: {Authorization: this.props.token}})
+      .then(res => this.setState(Object.assign(getDefaultState(), {joinButton: true})))
+      .catch(errors => {
+        // TODO: Catch errors with the event, like maxAttendees, Pending Event, etc
+        console.log(errors)
+        this.setState({status: 'error', errors})
       })
   }
 
@@ -88,7 +107,7 @@ class ActionButton extends Component {
             isJoining
               ? <button className="button is-primary is-loading" disabled>Join</button>
               : hasJoined
-                ? <button className="button" onClick={this.resetState.bind(true)}>Close</button>
+                ? <button className="button" onClick={this.resetState.bind(this)}>Close</button>
                 : <button className="button is-primary" onClick={this.onJoin.bind(this)}>Join</button>
           }
           onClose={() => !isJoining ? this.resetState() : null}>
@@ -100,6 +119,33 @@ class ActionButton extends Component {
         </Modal>
       )
     }
+
+    if (this.state.cancelModal) {
+      let isCanceling = this.state.attendee.status === 'leaving'
+      let hasCanceled = this.state.attendee.status === 'left'
+
+      return (
+        <Modal title="Leave Event"
+          okButton={
+            isCanceling
+              ? <button className="button is-danger is-loading" disabled>Leave</button>
+              : hasCanceled
+                ? <button className="button" onClick={() => this.setState({cancelModal: false})}>Close</button>
+                : <button className="button is-danger" onClick={this.onLeave.bind(this)}>Leave</button>
+          }
+          onClose={() => !isCanceling ? this.setState({cancelModal: false}) : null}>
+          {
+            hasCanceled
+            ? <div>You are now out to this event, you can re-join later</div>
+            : <div>You are about to leave this Event, are you sure?</div>
+          }
+        </Modal>
+      )
+    }
+
+    if (this.state.cancelButton) return <button
+      onClick={e => this.setState({cancelModal: true})}
+      className="button is-danger is-large ActionButton-join">Leave</button>
 
     return this.state.joinButton && <button
       onClick={e => this.setState({joinModal: true})}
