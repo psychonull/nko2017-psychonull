@@ -2,6 +2,11 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import CreateEventForm from './CreateEventForm';
 import './CreateEvent.css';
+import Joi from 'joi-browser'
+import EventSchema from '../../schemas/event';
+
+const {post} = EventSchema(Joi)
+const {validate} = Joi
 /*
 let testEvent = {
   name: 'Pepe',
@@ -26,6 +31,10 @@ class CreateEvent extends Component {
 
   onSubmit() {
     // TODO: Data validations
+    let result = validate(this.state.event, post)
+    console.log(result)
+    return;
+
     this.setState({status: 'saving'})
 
     axios
