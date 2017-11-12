@@ -34,6 +34,20 @@ const sendNotif = (event, attendee) => {
   }
 };
 
+app.param('eventId', async (req, res, next, eventId) => {
+  const event = await db.Event.findByCode(eventId, {
+    include: [
+      { model: db.User, as: 'createdBy' },
+      { model: db.User, as: 'attendees', through: db.Attendee },
+    ],
+  });
+  if (!event) {
+    return next({ statusCode: 404 });
+  }
+  req.event = event;
+  return next();
+});
+
 app.post('/', expressJoi({ body: post }), async (req, res, next) => {
   try {
     const [user] = await db.User.findCreateFind({
@@ -56,19 +70,7 @@ app.post('/', expressJoi({ body: post }), async (req, res, next) => {
   }
 });
 
-app.get('/:eventId', middlewares.authorize(false), async (req, res, next) => {
-  const event = await db.Event.findByCode(req.params.eventId, {
-    include: [
-      { model: db.User, as: 'createdBy' },
-      { model: db.User, as: 'attendees', through: db.Attendee },
-    ],
-  });
-  if (!event) {
-    return next({ statusCode: 404 });
-  }
-  req.event = event;
-  return next();
-}, (req, res) => {
+app.get('/:eventId', middlewares.authorize(false), (req, res) => {
   const responseBody = Object.assign(req.event.toJSON(), {
     attendees: req.event.toJSON().attendees.map(att => ({
       ..._.omit(att.Attendee, ['token']),
