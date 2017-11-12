@@ -75,7 +75,6 @@ describe('GET /events/:id', () => {
   });
 
   it('Should not include hidden properties', (done) => {
-
     const checkUserProps = (u) => {
       expect(u.id).to.be.undefined;
       expect(u.email).to.be.undefined;
