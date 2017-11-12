@@ -1,14 +1,14 @@
 const nodemailer = require('nodemailer');
-const mg = require('nodemailer-mailgun-transport');
+const sgTransport = require('nodemailer-sendgrid-transport');
 const config = require('../config');
 
-const auth = config.mailgun;
+const auth = config.sendgrid;
 
 const attendanceConfirmation = require('./messages/attendanceConfirmation');
 const eventConfirmation = require('./messages/eventConfirmation');
 
 const transport = auth ?
-  nodemailer.createTransport(mg({ auth })) :
+  nodemailer.createTransport(sgTransport({ auth })) :
   nodemailer.createTransport({ jsonTransport: true });
 
 const sendWrapper = (p) => {
