@@ -6,6 +6,7 @@ const { post } = require('../src/schemas/attendee')(Joi);
 const db = require('../models');
 const config = require('../config');
 const middlewares = require('./middlewares');
+const mailer = require('../mailer');
 
 const app = express.Router();
 
@@ -19,10 +20,9 @@ const createToken = () => new Promise((resolve, reject) => {
   });
 });
 
-const sendNotif = (event, attendee) => {
-  if (!config.sendEmails) {
-    console.log(`CONFIRMATION URL ---> ${config.baseUrl}/event/${event.code}/${attendee.token}`);
-  }
+const sendNotif = (event, token, to) => {
+  const link = `${config.baseUrl}/event/${event.code}/${token}`;
+  mailer.send.attendanceConfirmation(to, link, event.title, event.body);
 };
 
 const canAddAttendee = (req, res, next) => {
@@ -59,9 +59,9 @@ app.post('/', expressJoi({ body: post }), canAddAttendee, async (req, res, next)
     if (!existingAttendee) {
       const token = await createToken();
       await req.event.addAttendee(user, { through: { token, name: req.body.name } });
-      sendNotif(req.event, { token });
+      sendNotif(req.event, token, user.email);
     } else {
-      sendNotif(req.event, existingAttendee);
+      sendNotif(req.event, existingAttendee.token, user.email);
     }
     res.status(204).end();
   } catch (error) {
