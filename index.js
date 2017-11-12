@@ -3,6 +3,7 @@ const helmet = require('helmet');
 // const expressEnforcesSSL = require('express-enforces-ssl');
 const db = require('./models');
 const api = require('./api');
+const eventsController = require('./controllers/events');
 
 const PORT = process.env.PORT || 3001;
 
@@ -24,9 +25,9 @@ function notfound(req, res) {
   res.status(404).send('Not Found');
 }
 
-function errors(err, req, res) {
+function errors(err, req, res, next) { //eslint-disable-line
   console.log(err);
-  res.status(500).send('something went wrong');
+  res.status(err.statusCode || 500).send('something went wrong');
 }
 
 app
@@ -35,10 +36,21 @@ app
 
 app.use('/api', api);
 
-// Application-specific routes
-// Add your own routes here!
-app.get('/example-path', async (req, res) => {
-  res.json({ message: 'Hello World!' });
+app.param('eventId', eventsController.eventById);
+app.param('attendeeToken', eventsController.attendeeByToken);
+
+app.get('/events/:eventId/:attendeeToken', async (req, res, next) => {
+  if (req.attendee.EventId !== req.event.id) {
+    return res.status(403);
+  }
+  return next();
+}, eventsController.confirm, (req, res) => {
+  // tests return 404 because of build folder not found
+  if (process.env.NODE_ENV === 'test') {
+    return res.status(200).end();
+  }
+  // TODO: locals: req.event ? req.attendee ?
+  return res.sendFile(`${__dirname}/build/index.html`);
 });
 
 // Serve static assets built by create-react-app

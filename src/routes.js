@@ -7,7 +7,7 @@ const Routes = () => (
   <Router>
     <div>
       <Route exact path="/" component={CreateEvent} />
-      <Route exact path="/event/:id/:token?" component={ViewEvent} />
+      <Route exact path="/events/:id/:token?" component={ViewEvent} />
     </div>
   </Router>
 )

@@ -8,6 +8,7 @@ const db = require('../models');
 const config = require('../config');
 const middlewares = require('./middlewares');
 const attendeesRouter = require('./attendees');
+const eventsController = require('../controllers/events');
 
 const app = express.Router();
 
@@ -35,19 +36,7 @@ const sendNotif = (event, attendee) => {
   }
 };
 
-app.param('eventId', async (req, res, next, eventId) => {
-  const event = await db.Event.findByCode(eventId, {
-    include: [
-      { model: db.User, as: 'createdBy' },
-      { model: db.User, as: 'attendees', through: db.Attendee },
-    ],
-  });
-  if (!event) {
-    return next({ statusCode: 404 });
-  }
-  req.event = event;
-  return next();
-});
+app.param('eventId', eventsController.eventById);
 
 app.post('/', expressJoi({ body: post }), async (req, res, next) => {
   try {
