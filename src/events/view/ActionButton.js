@@ -94,7 +94,7 @@ class ActionButton extends Component {
           onClose={() => !isJoining ? this.resetState() : null}>
           {
             hasJoined
-            ? <div>You have joined this event! <b>BUT</b> you need to confirm it so check your inbox for the magic link</div>
+            ? <div>You are now joined to this event! <b>BUT</b> you need to confirm it so check your inbox for the magic link</div>
             : <User {...this.state.attendee} onChange={this.updateAttendee.bind(this)}/>
           }
         </Modal>
