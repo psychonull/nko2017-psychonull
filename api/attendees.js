@@ -36,17 +36,21 @@ const canAddAttendee = (req, res, next) => {
 };
 
 app.post('/', expressJoi({ body: post }), canAddAttendee, async (req, res, next) => {
-  const [user] = await db.User.findCreateFind({
-    where: { email: req.body.email },
-    defaults: {
-      email: req.body.email,
-      name: req.body.name,
-    },
-  });
-  const token = await createToken();
-  await req.event.addAttendee(user, { through: { token, name: req.body.name } });
-  sendNotif(req.event, { token });
-  res.status(204).end();
+  try {
+    const [user] = await db.User.findCreateFind({
+      where: { email: req.body.email },
+      defaults: {
+        email: req.body.email,
+        name: req.body.name,
+      },
+    });
+    const token = await createToken();
+    await req.event.addAttendee(user, { through: { token, name: req.body.name } });
+    sendNotif(req.event, { token });
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.delete('/', middlewares.authorize(true), (req, res, next) => {

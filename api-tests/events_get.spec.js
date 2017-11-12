@@ -85,6 +85,5 @@ describe('GET /events/:id', () => {
         expect(res.body.attendees.filter(att => att.me)).to.have.lengthOf(1);
         done();
       });
-
   });
 });
