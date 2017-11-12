@@ -77,7 +77,7 @@ Event.propTypes = {
   when: PropTypes.string,
   maxAttendance: PropTypes.number,
   attendees: PropTypes.array,
-  status: PropTypes.bool,
+  status: PropTypes.string,
   createdBy: PropTypes.shape({
     name: PropTypes.string, // if no name should fullfil with [this]@email.com
     status: PropTypes.oneOf(getStatuses())
