@@ -3,18 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.15.4",
     "express-enforces-ssl": "^1.1.0",
+    "express-joi-validator": "^2.0.0",
     "helmet": "^3.8.1",
+    "joi": "^13.0.1",
     "node-sass-chokidar": "0.0.3",
-    "prop-types": "^15.6.0",
     "pg": "^6.4.2",
     "pg-hstore": "^2.3.2",
+    "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
+    "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
     "sequelize": "^4.22.6",
-    "react-router-dom": "^4.2.2",
     "sequelize-cli": "^3.0.0"
   },
   "devDependencies": {

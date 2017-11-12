@@ -21,10 +21,25 @@ describe('POST /events', () => {
     agent
       .post('/api/events')
       .send({
-        body: 'Lol I send only the body ;D',
+        body: 'Lol I sent the body only ;D',
       })
       .end((err, res) => {
         expect(res.statusCode).to.be.equal(400);
+        done();
+      });
+  });
+
+  it('Should return 204 response with empty body if everything is ok', (done) => {
+    agent
+      .post('/api/events')
+      .send({
+        title: 'Mondays soccer',
+        body: 'Like every other monday we congregate to play soccer',
+        when: (new Date()).toJSON(),
+        email: 'nko-2017@mailinator.com',
+      })
+      .end((err, res) => {
+        expect(res.statusCode).to.be.equal(204);
         done();
       });
   });

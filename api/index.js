@@ -1,7 +1,9 @@
 
 const express = require('express');
 const helmet = require('helmet');
+const bodyParser = require('body-parser');
 const { version } = require('../package.json');
+const eventsRouter = require('./events');
 
 const app = express.Router();
 
@@ -22,24 +24,28 @@ function notfound(req, res) {
   });
 }
 
-function errors(err, req, res) {
-  console.log(err);
-  res.status(500).json({
+function errors(err, req, res, next) { // eslint-disable-line
+  if (err.isBoom) {
+    // joi request validation errors...
+    return res
+      .status(err.output.statusCode)
+      .json(err.output.payload);
+  }
+  return res.status(500).json({
     message: 'something went wrong',
   });
 }
 
 app
   .use(https)
+  .use(bodyParser.json())
   .use(helmet());
 
 app.get('/version', async (req, res) => {
   res.json({ version });
 });
 
-app.post('/events', async (req, res) => {
-  res.status(400).json({ version });
-});
+app.use('/events', eventsRouter);
 
 app
   .use(notfound)
