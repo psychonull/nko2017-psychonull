@@ -31,6 +31,7 @@ function errors(err, req, res, next) { // eslint-disable-line
       .status(err.output.statusCode)
       .json(err.output.payload);
   }
+  console.log('ERROR: ', err);
   return res.status(500).json({
     message: 'something went wrong',
   });
