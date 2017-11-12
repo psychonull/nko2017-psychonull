@@ -2,20 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
+import Attendees, {getActiveAttendees, getStatuses} from './Attendees';
 
 // TODO: Move the HERO section into a Layout component (same on CreateEvent)
+
+let hasHappened = when => moment(when) < moment();
+
+let renderWhen = when =>
+  `${hasHappened(when) ? 'Happened' : 'Will happen'} ${moment(when).fromNow()} (${moment(when).format('DD/MM/YYYY HH:mm')})`;
 
 let Event = ({
   title,
   body,
   when,
   maxAttendance,
+  status,
   attendees,
   createdBy,
   createdAt,
   updatedAt
 }) =>
-  <div className="ViewEvent container is-fluid">
+  <div className="ViewEvent">
     <section className="hero is-dark is-small">
       <div className="hero-body">
         <div className="columns">
@@ -24,52 +31,59 @@ let Event = ({
               {title}
             </h1>
             <h2 className="subtitle">
-              {moment(when).format('YYYY/MM/DD HH:mm')}
+              {renderWhen(when)}
             </h2>
           </div>
-          <div className="column is-half ViewEvent-metas">
-            <p>Created by {createdBy.me ? 'ME' : createdBy.name} at {moment(createdAt).format('YYYY/MM/DD HH:mm')}</p>
-            <p>Last update {moment(updatedAt).format('YYYY/MM/DD HH:mm')}</p>
+          <div className="column is-half">
+            <div className="ViewEvent-metas">
+              <p>Created by {createdBy.me ? <b>me</b> : createdBy.name} <span title={moment(createdAt).format('YYYY/MM/DD HH:mm')}>{moment(createdAt).fromNow()}</span></p>
+              {/* Since it cannot be updated yet: <p>Last update {moment(updatedAt).format('YYYY/MM/DD HH:mm')}</p>*/}
+            </div>
           </div>
         </div>
       </div>
     </section>
-    <div className="section ViewEvent-formSection">
+    <div className="section ViewEvent-content">
       <div className="columns">
-        <div className="column is-half content">
-          <h3 className="title">About this event</h3>
-          <ReactMarkdown source={body} />
+        <div className="column is-half ViewEvent-section ViewEvent-body panel">
+          <div className="header panel-heading">
+            <h3 className="title">About this event</h3>
+          </div>
+          <div className="content panel-block">
+            <ReactMarkdown source={body} />
+          </div>
         </div>
-        <div className="column is-half">
-          <h3 className="title">Attendees ({attendees.length} / {maxAttendance})</h3>
-          {attendees.map(({name, status, me}) => <li>{name}{me ? ' (me)' : ''} - {status}</li>)}
+        <div className="column is-half ViewEvent-section ViewEvent-attendees panel">
+          <div className="header panel-heading">
+            <h3 className="title">Attendees ({getActiveAttendees(attendees).length} / {maxAttendance})</h3>
+          </div>
+          <div className="panel-block">
+            {
+              status === 'PENDING'
+                ? <p className="empty-attendance is-danger">This event is not confirmed, please check your inbox for a confirmation link</p>
+                : getActiveAttendees(attendees).length > 0
+                  ? <Attendees attendees={attendees} />
+                  : <p className="empty-attendance">No attendees so far, click on the Join button to be the first one!</p>
+            }
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-let UserShape = {
-  // id: PropTypes.string,
-  // email: PropTypes.string,
-  name: PropTypes.string, // if no name should fullfil with [this]@email.com
-  status: PropTypes.oneOf(['PENDING']),
-  // createdAt: PropTypes.string,
-  // updatedAt: PropTypes.string,
-  // deletedAt: PropTypes.string
-}
-
 Event.propTypes = {
-  // id: PropTypes.number, >>>> code?
   title: PropTypes.string,
   body: PropTypes.string,
   when: PropTypes.string,
   maxAttendance: PropTypes.number,
-  attendees: PropTypes.arrayOf(PropTypes.shape(UserShape)),
-  createdBy: PropTypes.shape(UserShape),
+  attendees: PropTypes.array,
+  status: PropTypes.bool,
+  createdBy: PropTypes.shape({
+    name: PropTypes.string, // if no name should fullfil with [this]@email.com
+    status: PropTypes.oneOf(getStatuses())
+  }),
   createdAt: PropTypes.string,
-  updatedAt: PropTypes.string,
-  // deletedAt: PropTypes.string,
-  // createdById: PropTypes.number,
+  updatedAt: PropTypes.string
 }
 
 export default Event;
