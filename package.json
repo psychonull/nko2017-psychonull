@@ -23,6 +23,7 @@
     "react-datetime": "^2.10.3",
     "react-dom": "^16.0.0",
     "react-icons": "^2.2.7",
+    "react-markdown": "^3.0.0-rc3",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
     "sequelize": "^4.22.6",
