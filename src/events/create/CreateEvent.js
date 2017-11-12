@@ -22,11 +22,17 @@ class CreateEvent extends Component {
   state = {
     status: 'ready',
     errors: {},
-    event: {}
+    event: {},
+    preview: false
   }
 
   onChange(change) {
     this.setState({event: Object.assign({}, this.state.event, change)})
+  }
+
+  onTogglePreview(e) {
+    e.preventDefault()
+    this.setState({preview: !this.state.preview})
   }
 
   onSubmit() {
@@ -71,10 +77,12 @@ class CreateEvent extends Component {
           <div className="columns">
             <div className="column is-centered CreateEvent-form">
               <CreateEventForm {...this.state.event}
+                preview={this.state.preview}
                 saving={this.state.status === 'saving'}
                 errors={this.state.errors}
                 onChange={this.onChange.bind(this)}
-                onSubmit={this.onSubmit.bind(this)}/>
+                onSubmit={this.onSubmit.bind(this)}
+                onTogglePreview={this.onTogglePreview.bind(this)}/>
             </div>
           </div>
         </div>
