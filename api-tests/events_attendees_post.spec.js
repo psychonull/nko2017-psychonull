@@ -28,6 +28,7 @@ describe('POST /events/:id/attendees', () => {
         when: (new Date(2020, 10, 10)).toJSON(),
         createdById: users[0].id,
         maxAttendees: 4,
+        status: 'CONFIRMED',
       });
     })
     .then((newEvent) => {
@@ -165,5 +166,43 @@ describe('POST /events/:id/attendees', () => {
           })
           .catch(done);
       });
+  });
+
+  it('Cannot add attendee if the event is PENDING', (done) => {
+    db.Event.update({
+      when: new Date(2048, 10, 1),
+      maxAttendance: 24,
+      status: 'PENDING',
+    }, { where: { id: event.id } })
+      .then(() => {
+        agent
+          .post(`/api/events/${event.code}/attendees`)
+          .send({ name: 'asdasda', email: 'asdasdm@avava.cam' })
+          .end((err, res) => {
+            expect(res.statusCode).to.be.equal(400);
+            expect(res.body.message).to.match(/cannot join/ig);
+            expect(res.body.message).to.match(/pending confirmation/ig);
+            done();
+          });
+      })
+      .catch(done);
+  });
+
+  it('Cannot add attendee if the event is CANCELLED', (done) => {
+    db.Event.update({
+      status: 'CANCELLED',
+    }, { where: { id: event.id } })
+      .then(() => {
+        agent
+          .post(`/api/events/${event.code}/attendees`)
+          .send({ name: 'asdasda', email: 'asdasdm@avava.cam' })
+          .end((err, res) => {
+            expect(res.statusCode).to.be.equal(400);
+            expect(res.body.message).to.match(/cannot join/ig);
+            expect(res.body.message).to.match(/cancelled/ig);
+            done();
+          });
+      })
+      .catch(done);
   });
 });

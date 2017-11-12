@@ -26,6 +26,12 @@ const sendNotif = (event, attendee) => {
 };
 
 const canAddAttendee = (req, res, next) => {
+  if (req.event.status === 'PENDING') {
+    return next({ statusCode: 400, message: 'Cannot join an event that is pending confirmation from the owner' });
+  }
+  if (req.event.status === 'CANCELLED') {
+    return next({ statusCode: 400, message: 'Cannot join an event that has been cancelled by the owner' });
+  }
   if (req.event.when < new Date()) {
     return next({ statusCode: 400, message: 'Cannot subscribe to events from the past' });
   }
