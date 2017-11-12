@@ -9,6 +9,7 @@ const config = require('../config');
 const middlewares = require('./middlewares');
 const attendeesRouter = require('./attendees');
 const eventsController = require('../controllers/events');
+const mailer = require('../mailer');
 
 const app = express.Router();
 
@@ -30,10 +31,9 @@ const createAttendee = (event, user) => createToken()
     name: user.name,
   }));
 
-const sendNotif = (event, attendee) => {
-  if (!config.sendEmails) {
-    console.log(`CONFIRMATION URL ---> ${config.baseUrl}/events/${event.code}/${attendee.token}`);
-  }
+const sendNotif = (event, token, to) => {
+  const link = `${config.baseUrl}/events/${event.code}/${token}`;
+  mailer.send.eventConfirmation(to, link, event.title, event.body);
 };
 
 app.param('eventId', eventsController.eventById);
@@ -53,7 +53,7 @@ app.post('/', expressJoi({ body: post }), async (req, res, next) => {
     });
     req.event = event;
     req.attendee = await createAttendee(req.event, user);
-    sendNotif(req.event, req.attendee);
+    sendNotif(req.event, req.attendee.token, user.email);
     res.status(204).end();
   } catch (error) {
     next(error);
