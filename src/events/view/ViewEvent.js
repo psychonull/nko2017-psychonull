@@ -18,7 +18,7 @@ class ViewEvent extends Component {
     this.setState({token, id, status: 'loading'})
 
     if (token) {
-      this.props.history.replace(`/event/${id}`)
+      this.props.history.replace(`/events/${id}`)
     }
 
     axios

@@ -32,7 +32,7 @@ const createAttendee = (event, user) => createToken()
 
 const sendNotif = (event, attendee) => {
   if (!config.sendEmails) {
-    console.log(`CONFIRMATION URL ---> ${config.baseUrl}/event/${event.code}/${attendee.token}`);
+    console.log(`CONFIRMATION URL ---> ${config.baseUrl}/events/${event.code}/${attendee.token}`);
   }
 };
 
