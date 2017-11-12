@@ -21,7 +21,7 @@ const createToken = () => new Promise((resolve, reject) => {
 });
 
 const sendNotif = (event, token, to) => {
-  const link = `${config.baseUrl}/events/${event.code}/${token}`;
+  const link = `${config.baseUrl}/notif/${event.code}/${token}`;
   mailer.send.attendanceConfirmation(to, link, event.title, event.body);
 };
 

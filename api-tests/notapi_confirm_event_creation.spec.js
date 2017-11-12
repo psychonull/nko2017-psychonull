@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const db = require('../models');
 
 let agent = null;
-describe('(not_api) GET /events/:id/:token', () => {
+describe('(not_api) GET /notif/:id/:token', () => {
   let user = null;
   let event = null;
   let attendeeUser = null;
@@ -40,7 +40,7 @@ describe('(not_api) GET /events/:id/:token', () => {
 
   it('Should return 404 error if the event is not found', (done) => {
     agent
-      .get('/events/LOLNOTFOUND/fakekey')
+      .get('/notif/LOLNOTFOUND/fakekey')
       .end((err, res) => {
         expect(res.statusCode).to.be.equal(404);
         done();
@@ -49,7 +49,7 @@ describe('(not_api) GET /events/:id/:token', () => {
 
   it('Should return 401 if event found but invalid token', (done) => {
     agent
-      .get(`/events/${event.code}/hackerman`)
+      .get(`/notif/${event.code}/hackerman`)
       .end((err, res) => {
         expect(res.statusCode).to.be.equal(401);
         done();
@@ -58,7 +58,7 @@ describe('(not_api) GET /events/:id/:token', () => {
 
   it('Should mark the event as CONFIRMED if token belongs to owner', (done) => {
     agent
-      .get(`/events/${event.code}/${creatorAttendeeToken}`)
+      .get(`/notif/${event.code}/${creatorAttendeeToken}`)
       .end((err, res) => {
         expect(res.statusCode).to.be.equal(200);
         db.Event.findOne({ where: { id: event.id } })
@@ -78,7 +78,7 @@ describe('(not_api) GET /events/:id/:token', () => {
     })
       .then(() => {
         agent
-          .get(`/events/${event.code}/${creatorAttendeeToken}`)
+          .get(`/notif/${event.code}/${creatorAttendeeToken}`)
           .end((err, res) => {
             expect(res.statusCode).to.be.equal(200);
             db.Event.findOne({ where: { id: event.id } })
@@ -100,7 +100,7 @@ describe('(not_api) GET /events/:id/:token', () => {
     })
       .then(() => {
         agent
-          .get(`/events/${event.code}/${creatorAttendeeToken}`)
+          .get(`/notif/${event.code}/${creatorAttendeeToken}`)
           .end((err, res) => {
             expect(res.statusCode).to.be.equal(200);
             db.Event.findOne({ where: { id: event.id } })
@@ -126,7 +126,7 @@ describe('(not_api) GET /events/:id/:token', () => {
     })
       .then(() => {
         agent
-          .get(`/events/${event.code}/${attendeeUserToken}`)
+          .get(`/notif/${event.code}/${attendeeUserToken}`)
           .end((err, res) => {
             expect(res.statusCode).to.be.equal(200);
             db.Event.findOne({ where: { id: event.id } })

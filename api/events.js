@@ -32,7 +32,7 @@ const createAttendee = (event, user) => createToken()
   }));
 
 const sendNotif = (event, token, to) => {
-  const link = `${config.baseUrl}/events/${event.code}/${token}`;
+  const link = `${config.baseUrl}/notif/${event.code}/${token}`;
   mailer.send.eventConfirmation(to, link, event.title, event.body);
 };
 
