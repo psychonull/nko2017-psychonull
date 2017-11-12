@@ -21,7 +21,7 @@ const createToken = () => new Promise((resolve, reject) => {
 });
 
 const sendNotif = (event, token, to) => {
-  const link = `${config.baseUrl}/events/${event.code}/${token}`;
+  const link = `${config.baseUrl}/notif/${event.code}/${token}`;
   mailer.send.attendanceConfirmation(to, link, event.title, event.body);
 };
 
@@ -35,8 +35,8 @@ const canAddAttendee = (req, res, next) => {
   if (req.event.when < new Date()) {
     return next({ statusCode: 400, message: 'Cannot subscribe to events from the past' });
   }
-  if (req.event.attendees.length + 1 > req.event.maxAttendance) {
-    return next({ statusCode: 400, message: 'maxAttendance: the event is full' });
+  if (req.event.attendees.length + 1 > req.event.maxAttendees) {
+    return next({ statusCode: 400, message: 'maxAttendees: the event is full' });
   }
   return next();
 };

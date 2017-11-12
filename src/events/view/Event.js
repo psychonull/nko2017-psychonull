@@ -17,7 +17,7 @@ let Event = ({
   title,
   body,
   when,
-  maxAttendance,
+  maxAttendees,
   status,
   attendees,
   createdBy,
@@ -62,7 +62,7 @@ let Event = ({
         </div>
         <div className="column is-half ViewEvent-section ViewEvent-attendees panel">
           <div className="header panel-heading">
-            <h3 className="title">Attendees ({getActiveAttendees(attendees).length} / {maxAttendance})</h3>
+            <h3 className="title">Attendees ({getActiveAttendees(attendees).length} / {maxAttendees})</h3>
           </div>
           <div className="panel-block">
             {
@@ -83,7 +83,7 @@ Event.propTypes = {
   title: PropTypes.string,
   body: PropTypes.string,
   when: PropTypes.string,
-  maxAttendance: PropTypes.number,
+  maxAttendees: PropTypes.number,
   attendees: PropTypes.array,
   status: PropTypes.string,
   createdBy: PropTypes.shape({

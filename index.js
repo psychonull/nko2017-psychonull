@@ -39,7 +39,7 @@ app.use('/api', api);
 app.param('eventId', eventsController.eventById);
 app.param('attendeeToken', eventsController.attendeeByToken);
 
-app.get('/events/:eventId/:attendeeToken', async (req, res, next) => {
+app.get('/notif/:eventId/:attendeeToken', async (req, res, next) => {
   if (req.attendee.EventId !== req.event.id) {
     return res.status(403);
   }
@@ -50,7 +50,7 @@ app.get('/events/:eventId/:attendeeToken', async (req, res, next) => {
     return res.status(200).end();
   }
   // TODO: locals: req.event ? req.attendee ?
-  return res.sendFile(`${__dirname}/build/index.html`);
+  return res.redirect(`/events/${req.params.eventId}/${req.params.attendeeToken}`);
 });
 
 // Serve static assets built by create-react-app
