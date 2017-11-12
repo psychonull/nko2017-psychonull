@@ -1,0 +1,16 @@
+.CreateEventForm {
+
+  .textarea:not([rows]) {
+    min-height: 250px;
+  }
+
+  &-footer {
+    background-color: hsl(0, 0%, 96%);
+    padding: 20px;
+  }
+
+  &-create {
+    display: flex;
+    justify-content: center;
+  }
+}
