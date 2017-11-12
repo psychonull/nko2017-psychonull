@@ -1,27 +1,27 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import CreateEventForm from './CreateEventForm';
-import './CreateEvent.css';
+import isEmpty from 'lodash/isEmpty'
 import Joi from 'joi-browser'
 import EventSchema from '../../schemas/event';
+import {validate, createSchema} from '../../utils/validator'
+import './CreateEvent.css';
 
-const {post} = EventSchema(Joi)
-const {validate} = Joi
-/*
-let testEvent = {
-  name: 'Pepe',
-  email: 'pepe@gmail.com',
-  when: '',
-  title: 'Title',
-
-  attendees: 'test text',
-  body: 'pepe',
-  maxAttendees: 5
-}*/
+let isValid = validate(
+  createSchema({
+    title: 'Title',
+    when: 'When',
+    maxAttendees: 'Max',
+    body: 'Body',
+    name: 'Your Name',
+    email: 'Your Email'
+  }, EventSchema(Joi).post)
+)
 
 class CreateEvent extends Component {
   state = {
     status: 'ready',
+    errors: {},
     event: {}
   }
 
@@ -30,12 +30,13 @@ class CreateEvent extends Component {
   }
 
   onSubmit() {
-    // TODO: Data validations
-    let result = validate(this.state.event, post)
-    console.log(result)
-    return;
+    let errors = isValid(this.state.event)
+    if (!isEmpty(errors)) {
+      this.setState({errors})
+      return
+    }
 
-    this.setState({status: 'saving'})
+    this.setState({status: 'saving', errors: {}})
 
     axios
       .post('/api/events', this.state.event)
@@ -71,6 +72,7 @@ class CreateEvent extends Component {
             <div className="column is-centered CreateEvent-form">
               <CreateEventForm {...this.state.event}
                 saving={this.state.status === 'saving'}
+                errors={this.state.errors}
                 onChange={this.onChange.bind(this)}
                 onSubmit={this.onSubmit.bind(this)}/>
             </div>
