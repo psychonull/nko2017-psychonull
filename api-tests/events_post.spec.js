@@ -72,7 +72,7 @@ describe('POST /events', () => {
             expect(user.name).to.equal('Morty');
             expect(user.status).to.equal('PENDING');
             return db.Event.findOne({
-              where: { CreatedById: user.id }
+              where: { createdById: user.id },
             });
           })
           .then((event) => {

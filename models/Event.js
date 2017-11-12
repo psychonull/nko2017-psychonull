@@ -30,12 +30,13 @@ module.exports =
         foreignKey: {
           allowNull: false,
         },
-        as: 'CreatedBy',
+        as: 'createdBy',
       });
 
       this.belongsToMany(models.User, {
         onDelete: 'CASCADE',
         through: models.Attendee,
+        as: 'attendees',
       });
     }
   };
