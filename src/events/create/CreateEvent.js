@@ -56,7 +56,7 @@ class CreateEvent extends Component {
       return <FullScreenMessage modifier="is-success" title="Event created!" message="We've just sent you an email to confirm it." />
 
     return (
-      <div className="CreateEvent container is-fluid">
+      <div className="CreateEvent">
         <section className="hero is-dark is-small">
           <div className="hero-body">
             <div className="container level">

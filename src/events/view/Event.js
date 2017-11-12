@@ -15,7 +15,7 @@ let Event = ({
   createdAt,
   updatedAt
 }) =>
-  <div className="ViewEvent container is-fluid">
+  <div className="ViewEvent">
     <section className="hero is-dark is-small">
       <div className="hero-body">
         <div className="columns">
