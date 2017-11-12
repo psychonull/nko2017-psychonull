@@ -45,7 +45,7 @@ class ViewEvent extends Component {
       }
       default: return (
         <div>
-          <Event {...this.state.event} />
+          <Event {...this.state.event} eventId={this.state.id}/>
           <ActionButton event={this.state.event} token={this.state.token} eventId={this.state.id}/>
         </div>
       );

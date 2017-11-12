@@ -86,7 +86,7 @@ CreateEventForm.defaultProps = {
   when: '',
   title: '',
   body: '',
-  maxAttendees: 0,
+  maxAttendees: 10,
   onChange: () => {},
   onSubmit: () => {},
   onTogglePreview: () => {},

@@ -6,8 +6,8 @@ export let getStatuses = () => ['PENDING', 'ACTIVE', 'DELETED']
 export let Status = getStatuses().map(status => ({[status]: status}))
 
 let Attendee = ({name, status, me}) =>
-  <li className="Attendee">
-    {name}{me ? ' (me)' : ''} - {status}
+  <li className={`Attendee ${me ? 'me' : ''}`}>
+    {me ? <b>{name}</b> : name}
   </li>
 
 Attendee.propTypes = {

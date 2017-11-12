@@ -7,11 +7,13 @@ import Attendees, {getActiveAttendees, getStatuses} from './Attendees';
 // TODO: Move the HERO section into a Layout component (same on CreateEvent)
 
 let hasHappened = when => moment(when) < moment();
+let getLink = eventId => <a href={`/events/${eventId}`}><b>{window.location.href}</b></a>
 
 let renderWhen = when =>
   `${hasHappened(when) ? 'Happened' : 'Will happen'} ${moment(when).fromNow()} (${moment(when).format('DD/MM/YYYY HH:mm')})`;
 
 let Event = ({
+  eventId,
   title,
   body,
   when,
@@ -44,6 +46,11 @@ let Event = ({
       </div>
     </section>
     <div className="section ViewEvent-content">
+      <article class="message is-info">
+        <div class="message-body" style={{textAlign: 'center'}}>
+          Share this link {getLink(eventId)} to join this event
+        </div>
+      </article>
       <div className="columns">
         <div className="column is-half ViewEvent-section ViewEvent-body panel">
           <div className="header panel-heading">
@@ -72,6 +79,7 @@ let Event = ({
   </div>
 
 Event.propTypes = {
+  eventId: PropTypes.string,
   title: PropTypes.string,
   body: PropTypes.string,
   when: PropTypes.string,
