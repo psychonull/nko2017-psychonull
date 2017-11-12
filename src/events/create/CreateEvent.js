@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty'
 import Joi from 'joi-browser'
 import EventSchema from '../../schemas/event';
 import {validate, createSchema} from '../../utils/validator'
+import FullScreenMessage from '../../layouts/FullScreenMessage'
 import './CreateEvent.css';
 
 let isValid = validate(
@@ -51,13 +52,8 @@ class CreateEvent extends Component {
   }
 
   render() {
-    if (this.state.status === 'success'){
-      return (
-        <div>
-          EVENT CREATED!, go check your email
-        </div>
-      )
-    }
+    if (this.state.status === 'success')
+      return <FullScreenMessage modifier="is-success" title="Event created!" message="We've just sent you an email to confirm it." />
 
     return (
       <div className="CreateEvent container is-fluid">
