@@ -44,7 +44,7 @@
   },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"node index\" \"npm run watch-css\"",
-    "heroku-postbuild": "react-scripts build && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
+    "heroku-postbuild": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ && react-scripts build",
     "build": "concurrently \"react-scripts build\" \"npm run build-css\"",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
