@@ -1,7 +1,16 @@
 const Sequelize = require('sequelize');
+const Hashids = require('hashids');
+const config = require('../config');
+const _ = require('lodash');
+
+const hashids = new Hashids(config.hashidsSeed, 12);
 
 module.exports =
   class Event extends Sequelize.Model {
+    get code() {
+      return hashids.encode(this.id);
+    }
+
     static init(sequelize) {
       return super.init({
         title: {
@@ -13,6 +22,7 @@ module.exports =
         },
         when: {
           type: Sequelize.DATE,
+          allowNull: false,
         },
         maxAttendance: {
           type: Sequelize.INTEGER,
@@ -38,5 +48,11 @@ module.exports =
         through: models.Attendee,
         as: 'attendees',
       });
+    }
+
+    static findByCode(code, opts) {
+      return Event.findOne(_.merge({
+        where: { id: hashids.decode(code) },
+      }, opts));
     }
   };

@@ -6,9 +6,6 @@ const expressJoi = require('express-joi-validator');
 const { post } = require('../src/schemas/event')(Joi);
 const db = require('../models');
 const config = require('../config');
-const Hashids = require('hashids');
-
-const hashids = new Hashids(config.hashidsSeed, 12);
 
 const app = express.Router();
 
@@ -30,10 +27,9 @@ const createAttendee = (event, user) => createToken()
     name: user.name,
   }));
 
-const sendNotif = (attendee) => {
-  const eventId = hashids.encode(attendee.EventId);
+const sendNotif = (event, attendee) => {
   if (!config.sendEmails) {
-    console.log(`CONFIRMATION URL ---> ${config.baseUrl}/event/${eventId}/${attendee.token}`);
+    console.log(`CONFIRMATION URL ---> ${config.baseUrl}/event/${event.code}/${attendee.token}`);
   }
 };
 
@@ -52,11 +48,30 @@ app.post('/', expressJoi({ body: post }), async (req, res, next) => {
     });
     req.event = event;
     req.attendee = await createAttendee(req.event, user);
-    sendNotif(req.attendee);
+    sendNotif(req.event, req.attendee);
     res.status(204).end();
   } catch (error) {
     next(error);
   }
+});
+
+app.get('/:eventId', async (req, res, next) => {
+  const event = await db.Event.findByCode(req.params.eventId, {
+    include: [
+      { model: db.User, as: 'createdBy' },
+      { model: db.User, as: 'attendees', through: db.Attendee },
+    ],
+  });
+  if (!event) {
+    return next({ statusCode: 404 });
+  }
+  const responseBody = Object.assign(event.toJSON(), {
+    attendees: event.toJSON().attendees.map(att => ({
+      ..._.omit(att.Attendee, ['token']),
+      email: att.email,
+    })),
+  });
+  return res.json(responseBody);
 });
 
 module.exports = app;

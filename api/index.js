@@ -30,6 +30,10 @@ function errors(err, req, res, next) { // eslint-disable-line
     return res
       .status(err.output.statusCode)
       .json(err.output.payload);
+  } else if (err.statusCode === 404) {
+    return res.status(404).json({
+      message: err.message || 'Entity not found',
+    });
   }
   console.log('ERROR: ', err);
   return res.status(500).json({
