@@ -53,10 +53,13 @@ app
   .use(notfound)
   .use(errors);
 
-db.sequelize.sync()
+module.exports = db.sequelize.sync()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Listening on ${PORT}`);
-    });
+    if (process.env.NODE_ENV !== 'test') {
+      app.listen(PORT, () => {
+        console.log(`Listening on ${PORT}`);
+      });
+    }
+    return app;
   })
   .catch(err => console.log(err));

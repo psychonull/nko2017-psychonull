@@ -4,9 +4,12 @@
   "private": true,
   "dependencies": {
     "bulma": "^0.6.1",
+    "body-parser": "^1.18.2",
     "express": "^4.15.4",
     "express-enforces-ssl": "^1.1.0",
+    "express-joi-validator": "^2.0.0",
     "helmet": "^3.8.1",
+    "joi": "^13.0.1",
     "node-sass-chokidar": "0.0.3",
     "pg": "^6.4.2",
     "pg-hstore": "^2.3.2",
@@ -20,13 +23,16 @@
     "sequelize-cli": "^3.0.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "concurrently": "^3.5.0",
     "eslint": "^4.9.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.4.0",
-    "nodemon": "^1.12.1"
+    "mocha": "^4.0.1",
+    "nodemon": "^1.12.1",
+    "supertest": "^3.0.0"
   },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"node index\" \"npm run watch-css\"",
@@ -36,7 +42,9 @@
     "eject": "react-scripts eject",
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive",
-    "lint": "eslint **\\*.js"
+    "lint": "eslint **\\*.js",
+    "test-api": "mocha ./api-tests/**.spec.js",
+    "test-api-watch": "mocha ./api-tests/**.spec.js --watch"
   },
   "engines": {
     "node": "8.9.1",
