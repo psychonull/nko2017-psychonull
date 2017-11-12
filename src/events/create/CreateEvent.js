@@ -59,10 +59,13 @@ class CreateEvent extends Component {
       <div className="CreateEvent">
         <section className="hero is-dark is-small">
           <div className="hero-body">
-            <div className="container level">
+            <div className="container">
               <h1 className="title">
-                New Event
+                Create Event
               </h1>
+              <h2 className="subtitle">
+                Let's just get together.
+              </h2>
             </div>
           </div>
         </section>
