@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import get from 'lodash/get';
 import axios from 'axios';
-import './ViewEvent.css';
 import Event from './Event'
+import NotFound from '../../layouts/NotFound'
+import FullScreenMessage from '../../layouts/FullScreenMessage'
+import './ViewEvent.css';
 
 class ViewEvent extends Component {
   state = {
@@ -21,6 +23,9 @@ class ViewEvent extends Component {
       this.props.history.replace(`/events/${id}`)
     }
 
+    // Test Views over error statuses
+    // return this.setState({status: 'error', error: {status: 500}})
+
     axios
       .get(`/api/events/${id}`, token && {headers: {Authorization: token}})
       .then(res => this.setState({status: 'success', event: res.data}))
@@ -32,9 +37,9 @@ class ViewEvent extends Component {
       case 'loading': return (<div>Loading Event ...</div>);
       case 'error' : {
         switch (this.state.error.status){
-          case 401: return (<div>Your link or token are failing</div>);
-          case 404: return (<div>Event Not Found</div>);
-          default: return (<div>There was an error when fetching the Event</div>);
+          case 401: return <FullScreenMessage title="Uh Oh!" message="That link doesn't work ˚‧º·(˚ ˃̣̣̥⌓˂̣̣̥ )‧º·˚" modifier="is-warning"/>
+          case 404: return <NotFound title="Event not found!" message="There is no such Event around here, sorry" />;
+          default: return <FullScreenMessage title="BOOM!" message="Something went wrong! (╯°□°）╯︵ ┻━┻" modifier="is-danger"/>
         }
       }
       default: return (<Event {...this.state.event} />);

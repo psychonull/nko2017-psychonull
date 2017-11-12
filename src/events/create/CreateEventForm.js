@@ -36,7 +36,7 @@ let _ = attr => ({
 let parse = (type, value) => {
   switch(type) {
     case 'number': return Number(value) || 0;
-    case 'datetime': return value.toJSON();
+    case 'datetime': return moment(value).isValid() ? value.toJSON() : '';
     default: return value;
   }
 }
