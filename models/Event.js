@@ -28,6 +28,11 @@ module.exports =
           type: Sequelize.INTEGER,
           defaultValue: 50,
         },
+        status: {
+          type: Sequelize.ENUM('PENDING', 'CONFIRMED', 'CANCELLED'),
+          allowNull: false,
+          defaultValue: 'PENDING',
+        },
       }, {
         sequelize,
         paranoid: true,
