@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import FaAsterisk from 'react-icons/lib/fa/asterisk';
 import FaEnvelope from 'react-icons/lib/fa/envelope';
+import FaPreview from 'react-icons/lib/fa/eye';
+import FaSource from 'react-icons/lib/fa/font';
+import ReactMarkdown from 'react-markdown'
 import './CreateEventForm.css';
 
 // TODO: move this into controls and import it from there
@@ -117,7 +120,9 @@ let CreateEventForm = ({
   errors,
   onChange,
   onSubmit,
-  isSaving
+  isSaving,
+  preview,
+  onTogglePreview
 }) =>
   <div className="CreateEventForm column">
     <form onSubmit={createSubmit(onSubmit)}>
@@ -133,11 +138,17 @@ let CreateEventForm = ({
         </div>
       </div>
 
-      <div className="field">
+      <div className="field CreateEventForm-body">
         <label className="label">{_('body')}</label>
         <div className="control">
-          <textarea className="textarea" value={body} placeholder={_('placeholder_body')} onChange={e => onChange({'body': e.target.value})}/>
+          {preview
+            ? <div className="content CreateEventForm-bodyPreview"><ReactMarkdown source={body} /></div>
+            : <textarea className="textarea" value={body} placeholder={_('placeholder_body')} onChange={e => onChange({'body': e.target.value})}/>
+          }
         </div>
+        <button className="button CreateEventForm-togglePreview" onClick={onTogglePreview}>
+          {preview ? <span className="icon"><FaSource/></span> : <span className="icon"><FaPreview/></span>}
+        </button>
       </div>
 
       <div className="CreateEventForm-footer">
@@ -182,8 +193,10 @@ CreateEventForm.propTypes = {
   maxAttendees: PropTypes.number,
   onChange: PropTypes.func,
   onSubmit: PropTypes.func,
+  onTogglePreview: PropTypes.func,
   isSaving: PropTypes.bool,
-  errors: PropTypes.object
+  errors: PropTypes.object,
+  preview: PropTypes.bool
 }
 CreateEventForm.defaultProps = {
   name: '',
@@ -194,6 +207,7 @@ CreateEventForm.defaultProps = {
   maxAttendees: 0,
   onChange: () => {},
   onSubmit: () => {},
+  onTogglePreview: () => {},
   errors: {}
 }
 

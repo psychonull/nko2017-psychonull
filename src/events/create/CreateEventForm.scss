@@ -1,9 +1,6 @@
+$event-body-min-height: 250px;
+
 .CreateEventForm {
-
-  .textarea:not([rows]) {
-    min-height: 250px;
-  }
-
   &-footer {
     background-color: hsl(0, 0%, 96%);
     padding: 20px;
@@ -12,5 +9,27 @@
   &-create {
     display: flex;
     justify-content: center;
+  }
+
+  &-body {
+    position: relative;
+
+    .textarea {
+      min-height: $event-body-min-height;
+    }
+  }
+
+  &-bodyPreview {
+    padding: 1rem 1rem;
+    border: 1px solid silver;
+    border-radius: 2px;
+    min-height: $event-body-min-height;
+  }
+
+  &-togglePreview {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
   }
 }

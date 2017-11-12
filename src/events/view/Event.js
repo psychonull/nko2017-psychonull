@@ -36,7 +36,7 @@ let Event = ({
     </section>
     <div className="section ViewEvent-formSection">
       <div className="columns">
-        <div className="column is-half">
+        <div className="column is-half content">
           <h3 className="title">About this event</h3>
           <ReactMarkdown source={body} />
         </div>
