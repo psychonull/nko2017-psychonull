@@ -122,7 +122,48 @@ describe('POST /events/:id/attendees', () => {
       .catch(done);
   });
 
-  it('Should reuse a existing user and add it to the event');
+  it('Should reuse a existing user and add it to the event', (done) => {
+    db.Event.update({ when: new Date(2048, 10, 1), maxAttendance: 14 }, { where: { id: event.id } })
+      .then(() => db.User.create({ email: 'reuse@plz.tech' }))
+      .then((user) => {
+        agent
+          .post(`/api/events/${event.code}/attendees`)
+          .send({ name: 'newname', email: user.email })
+          .end((err, res) => {
+            expect(res.statusCode).to.be.equal(204);
+            db.Event.findOne({
+              where: { id: event.id },
+              include: [
+                { model: db.User, as: 'attendees', through: db.Attendee },
+              ],
+            })
+              .then((e) => {
+                expect(e.attendees.find(a => a.id === user.id)).to.exist;
+                done();
+              })
+              .catch(done);
+          });
+      })
+      .catch(done);
+  });
 
-  it('Should reuse a existing user and resend notification if already in event');
+  it('Should reuse a existing user and resend notification if already in event', (done) => {
+    agent
+      .post(`/api/events/${event.code}/attendees`)
+      .send({ name: 'newname', email: 'reuse@plz.tech' })
+      .end((err, res) => {
+        expect(res.statusCode).to.be.equal(204);
+        db.Event.findOne({
+          where: { id: event.id },
+          include: [
+            { model: db.User, as: 'attendees', through: db.Attendee },
+          ],
+        })
+          .then((e) => {
+            expect(e.attendees.filter(a => a.email === 'reuse@plz.tech')).to.have.lengthOf(1);
+            done();
+          })
+          .catch(done);
+      });
+  });
 });

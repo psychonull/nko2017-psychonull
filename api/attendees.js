@@ -44,9 +44,19 @@ app.post('/', expressJoi({ body: post }), canAddAttendee, async (req, res, next)
         name: req.body.name,
       },
     });
-    const token = await createToken();
-    await req.event.addAttendee(user, { through: { token, name: req.body.name } });
-    sendNotif(req.event, { token });
+    const existingAttendee = await db.Attendee.findOne({
+      where: {
+        UserId: user.id,
+        EventId: req.event.id,
+      },
+    });
+    if (!existingAttendee) {
+      const token = await createToken();
+      await req.event.addAttendee(user, { through: { token, name: req.body.name } });
+      sendNotif(req.event, { token });
+    } else {
+      sendNotif(req.event, existingAttendee);
+    }
     res.status(204).end();
   } catch (error) {
     next(error);
